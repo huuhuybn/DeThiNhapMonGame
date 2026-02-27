@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Thi - Nhập Môn Lập Trình Game</title>
+    <meta name="description" content="Đề thi môn Nhập Môn Lập Trình Game - Trường Cao đẳng FPT Polytechnic">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a2235;
+            --bg-card-hover: #1f2a40;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #1e293b;
+            --glow-blue: rgba(59, 130, 246, 0.3);
+            --glow-purple: rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-animation .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation .orb:nth-child(1) {
+            width: 600px; height: 600px;
+            background: var(--accent-blue);
+            top: -200px; left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation .orb:nth-child(2) {
+            width: 500px; height: 500px;
+            background: var(--accent-purple);
+            top: 50%; right: -150px;
+            animation-delay: -7s;
+        }
+
+        .bg-animation .orb:nth-child(3) {
+            width: 400px; height: 400px;
+            background: var(--accent-pink);
+            bottom: -100px; left: 30%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -30px) scale(1.1); }
+            50% { transform: translate(-30px, 50px) scale(0.9); }
+            75% { transform: translate(30px, 30px) scale(1.05); }
+        }
+
+        /* Grid pattern overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 100px;
+            padding: 8px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .header-badge .dot {
+            width: 8px; height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .header h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            font-size: clamp(18px, 3vw, 26px);
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .header-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .header-meta .icon {
+            font-size: 16px;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), var(--accent-purple), transparent);
+            margin: 40px 0;
+            opacity: 0.4;
+        }
+
+        /* Info bar */
+        .info-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .info-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .info-item .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .info-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Question cards */
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .question-card:nth-child(1)::before {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        }
+        .question-card:nth-child(2)::before {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+        .question-card:nth-child(3)::before {
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-red));
+        }
+        .question-card:nth-child(4)::before {
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .question-card:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .question-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            flex-shrink: 0;
+            width: 48px; height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .question-card:nth-child(1) .question-number {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        }
+        .question-card:nth-child(2) .question-number {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+        }
+        .question-card:nth-child(3) .question-number {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+        }
+        .question-card:nth-child(4) .question-number {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .question-title {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.4;
+            padding-top: 8px;
+        }
+
+        .question-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            padding-left: 64px;
+        }
+
+        .question-details {
+            padding-left: 64px;
+        }
+
+        .detail-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .detail-list li {
+            position: relative;
+            padding: 8px 0 8px 28px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .detail-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        /* Keyboard key styling */
+        .key {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 32px;
+            padding: 0 10px;
+            background: linear-gradient(180deg, #2a3548 0%, #1a2235 100%);
+            border: 1px solid #3a4a60;
+            border-bottom: 3px solid #2a3548;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05);
+            vertical-align: middle;
+            margin: 0 2px;
+            transition: all 0.15s ease;
+        }
+
+        .key:hover {
+            transform: translateY(-1px);
+            border-bottom-width: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .key.key-accent {
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%);
+            border-color: rgba(59, 130, 246, 0.5);
+            border-bottom-color: rgba(59, 130, 246, 0.3);
+            color: var(--accent-blue);
+        }
+
+        /* Sprite preview */
+        .sprite-preview {
+            margin-top: 24px;
+            padding-left: 64px;
+        }
+
+        .sprite-container {
+            position: relative;
+            background: linear-gradient(135deg, #0f1724 0%, #162033 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            overflow: hidden;
+        }
+
+        .sprite-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+        }
+
+        .sprite-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .sprite-label .tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+
+        .sprite-img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            transition: transform 0.3s ease;
+        }
+
+        .sprite-img:hover {
+            transform: scale(1.02);
+        }
+
+        .sprite-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .sprite-item {
+            text-align: center;
+        }
+
+        .sprite-item img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+            image-rendering: pixelated;
+            transition: transform 0.3s ease;
+        }
+
+        .sprite-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .sprite-item .sprite-caption {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Action indicator */
+        .action-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .action-box .arrow {
+            font-size: 18px;
+        }
+
+        /* Note box */
+        .note-box {
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-left: 3px solid var(--accent-orange);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--accent-orange);
+            line-height: 1.6;
+        }
+
+        .note-box strong {
+            color: var(--accent-orange);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .footer .good-luck {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 24px 16px 60px; }
+            .question-card { padding: 24px 20px; }
+            .question-desc, .question-details, .sprite-preview { padding-left: 0; }
+            .question-number { width: 40px; height: 40px; font-size: 16px; border-radius: 12px; }
+            .header-meta { gap: 12px; }
+            .info-bar { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background effects -->
+    <div class="bg-animation">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+    <div class="grid-overlay"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header fade-in">
+            <div class="header-badge">
+                <span class="dot"></span>
+                Đề Thi Thực Hành
+            </div>
+            <h1>Nhập Môn Lập Trình Game</h1>
+            <p class="subtitle">🎮 Game Programming Fundamentals</p>
+            <div class="header-meta">
+                <span><span class="icon">📚</span> FPT Polytechnic</span>
+                <span><span class="icon">⏱️</span> Thời gian: 60 phút</span>
+                <span><span class="icon">📝</span> 4 câu hỏi</span>
+                <span><span class="icon">🎯</span> Thực hành</span>
+            </div>
+        </header>
+
+        <div class="divider"></div>
+
+        <!-- Info bar -->
+        <div class="info-bar fade-in">
+            <div class="info-item">
+                <div class="label">Số câu</div>
+                <div class="value">4 câu</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Hình thức</div>
+                <div class="value">Thực hành</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Công cụ</div>
+                <div class="value">Unity / Godot</div>
+            </div>
+            <div class="info-item">
+                <div class="label">Yêu cầu</div>
+                <div class="value">Sprite & Input</div>
+            </div>
+        </div>
+
+        <!-- Questions -->
+        <section id="questions">
+
+            <!-- Câu 1 -->
+            <div class="question-card fade-in">
+                <div class="question-header">
+                    <div class="question-number">1</div>
+                    <h2 class="question-title">Thay nhân vật và animation bằng Sprite</h2>
+                </div>
+                <p class="question-desc">
+                    Tạo sprite nhân vật <strong>cầm súng</strong> (multi-sprite) với các hành động: 
+                    <strong>chạy</strong>, <strong>nhảy</strong>, và <strong>đứng yên</strong>. 
+                    Thay thế nhân vật hiện tại và animation bằng các sprite bên dưới.
+                </p>
+                <div class="question-details">
+                    <ul class="detail-list">
+                        <li>Tạo sprite sheet đa khung hình (multi-frame sprite)</li>
+                        <li>Animation <strong>Idle</strong> – Nhân vật đứng yên cầm súng</li>
+                        <li>Animation <strong>Run</strong> – Nhân vật chạy cầm súng</li>
+                        <li>Animation <strong>Jump</strong> – Nhân vật nhảy lên</li>
+                        <li>Chuyển đổi mượt mà giữa các trạng thái animation</li>
+                    </ul>
+                </div>
+                <div class="sprite-preview">
+                    <div class="sprite-container">
+                        <div class="sprite-label">
+                            📦 Sprite Sheet Nhân Vật
+                            <span class="tag">MULTI-SPRITE</span>
+                        </div>
+                        <img src="assets/character_sprite.png" alt="Character Sprite Sheet" class="sprite-img">
+                    </div>
+                    <div class="action-box">
+                        <span class="arrow">→</span>
+                        Sử dụng sprite sheet trên để tạo animation cho nhân vật
+                    </div>
+                </div>
+            </div>
+
+            <!-- Câu 2 -->
+            <div class="question-card fade-in">
+                <div class="question-header">
+                    <div class="question-number">2</div>
+                    <h2 class="question-title">Rơi hoa quả khi bấm phím</h2>
+                </div>
+                <p class="question-desc">
+                    Khi bấm nút <span class="key key-accent">Enter</span> hoặc <span class="key key-accent">Space</span> 
+                    thì rơi ra <strong>10 hoa quả</strong> ngẫu nhiên từ trên xuống. 
+                    Tạo ảnh sprite hoa quả để sử dụng.
+                </p>
+                <div class="question-details">
+                    <ul class="detail-list">
+                        <li>Bấm <span class="key">Enter</span> hoặc <span class="key">Space</span> → Spawn 10 hoa quả</li>
+                        <li>Hoa quả rơi từ trên xuống dưới (có trọng lực)</li>
+                        <li>Sử dụng sprite sheet hoa quả bên dưới</li>
+                        <li>Mỗi quả được chọn ngẫu nhiên từ sprite sheet</li>
+                        <li>Có thể thêm hiệu ứng xoay khi rơi</li>
+                    </ul>
+                </div>
+                <div class="sprite-preview">
+                    <div class="sprite-container">
+                        <div class="sprite-label">
+                            🍎 Sprite Sheet Hoa Quả
+                            <span class="tag">10 LOẠI</span>
+                        </div>
+                        <img src="assets/fruits_sprite.png" alt="Fruits Sprite Sheet" class="sprite-img">
+                    </div>
+                    <div class="action-box">
+                        <span class="arrow">→</span>
+                        Cắt sprite sheet thành 10 loại quả riêng biệt để spawn ngẫu nhiên
+                    </div>
+                </div>
+            </div>
+
+            <!-- Câu 3 -->
+            <div class="question-card fade-in">
+                <div class="question-header">
+                    <div class="question-number">3</div>
+                    <h2 class="question-title">Bắn đạn sang 2 bên cùng lúc</h2>
+                </div>
+                <p class="question-desc">
+                    Bấm nút <span class="key key-accent">F</span> thì nhân vật <strong>bắn đạn sang 2 bên cùng lúc</strong> 
+                    (trái và phải) thay vì chỉ bắn 1 bên như hiện tại.
+                </p>
+                <div class="question-details">
+                    <ul class="detail-list">
+                        <li>Bấm <span class="key">F</span> → Bắn 2 viên đạn cùng lúc (trái + phải)</li>
+                        <li>Đạn bay theo 2 hướng ngược nhau</li>
+                        <li>Sử dụng sprite đạn bên dưới</li>
+                        <li>Đạn tự hủy khi ra ngoài màn hình</li>
+                        <li>Có thể thêm hiệu ứng muzzle flash khi bắn</li>
+                    </ul>
+                </div>
+                <div class="sprite-preview">
+                    <div class="sprite-container">
+                        <div class="sprite-label">
+                            💥 Sprite Đạn
+                            <span class="tag">ANIMATION</span>
+                        </div>
+                        <img src="assets/bullet_sprite.png" alt="Bullet Sprite" class="sprite-img">
+                    </div>
+                    <div class="note-box">
+                        <strong>📌 Lưu ý:</strong> Thay đổi logic bắn hiện tại từ 1 hướng thành 2 hướng. 
+                        Cả 2 viên đạn phải xuất phát từ vị trí nhân vật cùng một lúc.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Câu 4 -->
+            <div class="question-card fade-in">
+                <div class="question-header">
+                    <div class="question-number">4</div>
+                    <h2 class="question-title">Biến hình thành bông hoa</h2>
+                </div>
+                <p class="question-desc">
+                    Bấm nút <span class="key key-accent">G</span> thì nhân vật <strong>biến thành bông hoa</strong>. 
+                    Nhả nút <span class="key key-accent">G</span> thì nhân vật <strong>trở lại bình thường</strong>.
+                </p>
+                <div class="question-details">
+                    <ul class="detail-list">
+                        <li><strong>Giữ</strong> <span class="key">G</span> → Nhân vật biến thành bông hoa</li>
+                        <li><strong>Nhả</strong> <span class="key">G</span> → Nhân vật trở lại hình dạng ban đầu</li>
+                        <li>Sử dụng sprite bông hoa bên dưới</li>
+                        <li>Chuyển đổi mượt mà giữa 2 trạng thái</li>
+                        <li>Khi đang ở trạng thái hoa, vô hiệu hóa di chuyển (tùy chọn)</li>
+                    </ul>
+                </div>
+                <div class="sprite-preview">
+                    <div class="sprite-container">
+                        <div class="sprite-label">
+                            🌸 Sprite Bông Hoa
+                            <span class="tag">TRANSFORM</span>
+                        </div>
+                        <img src="assets/flower_sprite.png" alt="Flower Sprite" class="sprite-img" style="max-width: 250px; display: block; margin: 0 auto;">
+                    </div>
+                    <div class="action-box">
+                        <span class="arrow">→</span>
+                        Sử dụng GetKey (không phải GetKeyDown) để phát hiện giữ/nhả phím
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="good-luck">🎮 Chúc các bạn thi tốt! 🎮</p>
+            <p>Môn: Nhập Môn Lập Trình Game &bull; FPT Polytechnic</p>
+        </footer>
+    </div>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Add subtle parallax to orbs on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const orbs = document.querySelectorAll('.orb');
+            const x = (e.clientX / window.innerWidth - 0.5) * 2;
+            const y = (e.clientY / window.innerHeight - 0.5) * 2;
+            
+            orbs.forEach((orb, i) => {
+                const speed = (i + 1) * 15;
+                orb.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
